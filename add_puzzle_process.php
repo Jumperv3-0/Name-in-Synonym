@@ -1,12 +1,7 @@
 <?php	
-require('create_puzzle.php');
+require_once('create_puzzle.php');
 require_once('common_sql_functions.php');
 require_once('language_processor_functions.php');
-
-function insertIntoPuzzle($nameOfPuzzle, $email = "admin") {
-  $sql = 'INSERT INTO puzzles (puzzle_id, puzzle_name, creator_email) VALUES (DEFAULT, \'' . $nameOfPuzzle. '\', \'' . $email . '\');';
-  run_sql($sql);
-}
 
 function insertIntoPuzzleWords($puzzle_id, $word_id, $position_in_name, $clue_id) {
   $sql = 'INSERT INTO puzzle_words (puzzle_id, word_id, position_in_name, clue_id) VALUES (\'' . $puzzle_id. '\', \'' . $word_id . '\', \'' . $position_in_name .'\', \'' . $clue_id . '\');';

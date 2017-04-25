@@ -88,7 +88,7 @@
                 if ($puzzleflag === FALSE) {
                   // add to puzzle
                   /* FIXME: Need to give identifier of user that creates the puzzle eg. insertIntoPUzzle($name, $email) */
-                  insertIntoPuzzle($name);
+                  create_puzzle($name);
                   $puzzleflag = TRUE;
                 }
                 // add to words
