@@ -97,9 +97,9 @@
                 // add to char
                 insertIntoCharacters(getMaxWordId($word1));
                 insertIntoCharacters(getMaxWordId($word2));
-
+				
                 // add to puzzle words
-                insertIntoPuzzleWords(getMaxPuzzleId($name), getMaxWordId($word1), $j);
+                insertIntoPuzzleWords(getMaxPuzzleId($name), getMaxWordId($word1), $j,getMaxWordId($word2));
                 //array_push($list, $word1, $word2); // just for testing
             }
           }

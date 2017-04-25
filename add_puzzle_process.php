@@ -3,7 +3,7 @@ require('create_puzzle.php');
 require_once('common_sql_functions.php');
 require_once('language_processor_functions.php');
 
-function insertIntoPuzzle($nameOfPuzzle, $email = "hp6449qy@metrostate.edu") {
+function insertIntoPuzzle($nameOfPuzzle, $email = "admin") {
   $sql = 'INSERT INTO puzzles (puzzle_id, puzzle_name, creator_email) VALUES (DEFAULT, \'' . $nameOfPuzzle. '\', \'' . $email . '\');';
   run_sql($sql);
 }

@@ -6,6 +6,7 @@
       require('session_validation.php');
       require_once('add_puzzle_process.php');
       require_once('utility_functions.php');
+	  require_once('db_configuration.php');
     ?>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -82,9 +83,8 @@
                   // add to char
                   insertIntoCharacters(getMaxWordId($word1));
                   insertIntoCharacters(getMaxWordId($word2));
-                  $db = new mysqli(DATABASE_HOST, DATABASE_USER, DATABASE_PASSWORD, DATABASE_DATABASE);
-                  $sqlUpdate = 'UPDATE puzzle_words SET word_id=\'' . getMaxWordId($word1) . '\' WHERE puzzle_id=\'' . getMaxPuzzleId($name) . '\' AND position_inName=\'' . $j . '\';';
-                  $result =  $db->query($sqlUpdate);
+                  $sqlUpdate = 'UPDATE puzzle_words SET word_id=' . getMaxWordId($word1) . ', clue_id=' . getMaxWordId($word2) . ' WHERE puzzle_id=' . getMaxPuzzleId($name) . ' AND position_in_name=' . $j . ';';
+                  $result =  run_sql($sqlUpdate);
                   //$num_rows = $result->num_rows;
                 }
               }
