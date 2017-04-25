@@ -40,7 +40,9 @@
 	{
 		$sql = 'INSERT INTO puzzles (puzzle_id, puzzle_name, creator_email) VALUES
 		(DEFAULT, \''.$name.'\', \'' . $email . '\');';
+		run_sql('SET foreign_key_checks = 0;');
 		run_sql($sql);
+		run_sql('SET foreign_key_checks = 1;');
 	}
 
   function input_puzzle_words($word_array, $clue_array, $puzzle_id) {
