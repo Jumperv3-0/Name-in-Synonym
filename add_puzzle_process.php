@@ -8,8 +8,8 @@ function insertIntoPuzzle($nameOfPuzzle, $email = "hp6449qy@metrostate.edu") {
   run_sql($sql);
 }
 
-function insertIntoPuzzleWords($puzzle_id, $word_id, $position_in_name) {
-  $sql = 'INSERT INTO puzzle_words (puzzle_id, word_id, position_in_name) VALUES (\'' . $puzzle_id. '\', \'' . $word_id . '\', \'' . $position_in_name .'\');';
+function insertIntoPuzzleWords($puzzle_id, $word_id, $position_in_name, $clue_id) {
+  $sql = 'INSERT INTO puzzle_words (puzzle_id, word_id, position_in_name, clue_id) VALUES (\'' . $puzzle_id. '\', \'' . $word_id . '\', \'' . $position_in_name .'\', \'' . $clue_id . '\');';
   run_sql($sql);
 }
 

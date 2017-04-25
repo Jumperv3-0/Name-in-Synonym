@@ -33,9 +33,6 @@
       {	// User submited a puzzle name
         $input = mb_strtolower(validate_input($_POST["puzzleWord"]), 'UTF-8');
         if (strlen($input) > 0) {
-          // first we need to check if the puzzle name already exists.
-          $nameExist = false;
-          $nameExist = checkName($input);
           if(!$nameExist)
           {
             // puzzle name doesn't exist
@@ -43,7 +40,7 @@
           }
           else{
             // puzzle name already exists
-            echo $input; 
+             echo create_puzzle_table($input);
           }
         }
         else {
@@ -108,10 +105,12 @@
           }
         }
         echo createHeader(validate_input($_POST["word"]));
-        echo '<table class="main-tables" id="puzzle_table"><tr><th>Clue</th><th>Synonym</th></tr>';
+        echo "<div class='container'>";
+        echo '<table class="table table-condensed  main-tables" id="puzzle_table"><thead><tr><th>Clue</th><th>Synonym</th></tr></thead><tbody>';
         echo puzzleAddedTable(validate_input($_POST["word"]));
-        echo "</table>";
+        echo "</tbody></table><br><br><br><br>";
         echo createFooter();
+        echo "</div>";
       }
     }
     else {

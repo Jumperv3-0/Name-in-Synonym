@@ -18,11 +18,11 @@
 
   <body>
     <?php
-    require('create_puzzle.php');
-    require('common_sql_functions.php');
-    require('utility_functions.php');
+    require_once('create_puzzle.php');
+    require_once('common_sql_functions.php');
+    require_once('utility_functions.php');
     session_start();
-    require('session_validation.php');
+    require_once('session_validation.php');
     ?>
     <?PHP echo getTopNav(); ?>
     <!--FIXME: location of fail message not displayed properly-->
@@ -34,39 +34,7 @@
         <button class="pop_up_button" onclick="change_display_none('pop_up_fail')">OK</button>
       </div>
     </div>
-    <!--<div class="header2">Here's your "Name in Synonyms"</div>-->
-    <div class="container">
-      <h1>Here's your "Name in Synonyms"</h1>
-      <table class="table table-condensed main-tables" id="puzzle_table">
-        <thead>
-          <tr>
-            <th>Clue</th>
-            <th>Synonym</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php
-          $words = "";
-          $nameEntered = "";
-          if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (isset($_POST['randomPlay']) && isset($_POST['puzzleWord'])) { //random puzzle
-              $puzzleName = validate_input($_POST['puzzleWord']);
-              $puzzle = new Puzzle($puzzleName,-1,-1);
-              $words = $puzzle->js_solution;
-              echo $puzzle->htmlTable;
-            } else if (isset($_POST['iDesign']) && isset($_POST['puzzleWord'])) { // I will design
-              // TODO: admin design needs to be implemented
-              // admin create
-              // get puzzle words
-              // get puzzle clues
-              // define js
-              // create both puzzles
-			  
-			  
-            }
-          } else if (isset($_GET['puzzleName']) && isset($_GET['id'])) { // play button from puzzle list
-            echo "<p>play button</p>";
-    // TODO: Needs to give option to play again if they guess correctly
+    <!--TODO: Needs to give option to play again if they guess correctly-->
     <?php
     $words = "";
     $nameEntered = "";
@@ -78,35 +46,28 @@
           $words = $puzzle->js_solution;
           echo $puzzle->htmlTable;
           echo $puzzle->buttons;
+          $puzzle->createPuzzleInDB();
         } else {
           playAgain();
         }
       } else if (isset($_POST['iDesign']) && isset($_POST['puzzleWord'])) { // I will design
+        //saving on refresh
         $puzzleName = validate_input($_POST['puzzleWord']);
         if (strlen($puzzleName) > 0) {
           if (isset($_POST['maxLength']) && isset($_POST['minLength']) && isset($_POST['position'])) {
             echo "<form method='POST' action='#'>";
-            
             $preferedPosition = (int)validate_input($_POST['position']);
             $minLength = (int)validate_input($_POST['minLength']);
             $maxLength = (int)validate_input($_POST['maxLength']);
             $puzzle = new Puzzle($puzzleName,-1, $preferedPosition, $minLength, $maxLength);
             $words = $puzzle->js_solution;
-            // FIXME: is you have time change to show all char
             echo $puzzle->createAdminInputBoxes();
             echo $puzzle->admin_buttons;
             echo "</form>";
           } else {
-            // TODO: admin design needs to be implemented
-            // admin create
-            // get puzzle words
-            // get puzzle clues
-            // define js
-            // create both puzzles
             echo "<form method='POST' action='#'>";
             $puzzle = new Puzzle($puzzleName,-1, 2, 2, 20);
             $words = $puzzle->js_solution;
-            // FIXME: is you have time change to show all chars
             echo $puzzle->createAdminInputBoxes();
             echo $puzzle->admin_buttons;
             echo "</form>";
@@ -114,7 +75,7 @@
         } else {
           playAgain();
         }
-      } else if (isset($_POST['saveIDesign'])) {
+      } else if (isset($_POST['saveIDesign'])) { // save button pressed
         $puzzleInfo = pullInputFromSave();
         $clue_id_array = array_pop($puzzleInfo);
         $word_id_array = array_pop($puzzleInfo);
@@ -144,7 +105,7 @@
       } else {
         playAgain();
       }
-    } else if (isset($_GET['puzzleName'])) {
+    } else if (isset($_GET['puzzleName'])) {  // come back to play puzzle from login
       $puzzleName = validate_input($_GET['puzzleName']);
       $puzzle = new Puzzle($puzzleName,-1,-1, 2, 20);
       $words = $puzzle->js_solution;
@@ -201,35 +162,6 @@
             {
               echo '<input class="word_char active" type="text" maxLength="7" value="'.$word_chars[$j].'" readonly/>';
             }
-            $word_chars = getWordChars($word_array[$i]);
-			
-              // this is for building a comma seperate string of the words for the puzzle. For later use in javascript.
-              if($i == 0)
-              {
-                $words .= buildJScriptWords($word_chars);
-              }
-              else
-              {
-                $words .= ','.buildJScriptWords($word_chars);
-              }
-              //var_dump($clues_array);
-              echo '<tr><td>'.$clues_array[$i].'</td><td>';
-              //$char_indexes = mb_strpos($)//getCharIndex($word_id, $puzzle_name_chars[$i]);
-              $wordlen = count($word_chars);
-
-              for($j = 0; $j < $wordlen; ++$j)
-              {
-                if($char === $word_chars[$j])
-                {
-                  echo '<input class="word_char active" type="text" maxlength="7" value="'.$word_chars[$j].'" readonly/>';
-                }
-                else
-                {
-                  echo '<input class="word_char" type="text" maxlength="7" value=""/>';
-                }
-              }
-              echo '</tr>';
-              $i++;
             else
             {
               echo '<input class="word_char" type="text" maxLength="7" value=""/>';
@@ -479,9 +411,6 @@
           $this->createJSSolution();
           $this->createInputBoxes();
           $this->createTableFooter();
-          if ($puzzle_id === -1) {
-            $this->createPuzzle();
-          }
         } catch (Exception $e) {
           echo 'Message: ' . $e->getMessage();
         }
@@ -505,6 +434,7 @@
        * @param integer $puzzle_id of puzzle
        */
       function setId($puzzle_id) {
+        $this->puzzle_id = -1;
         if (!is_int($puzzle_id)) {
           throw new Exception("Puzzle_Id must be an integer!");
         } else if ($puzzle_id !== -1 && !checkPuzzleId($puzzle_id)) {
@@ -675,13 +605,13 @@
       }
 
       // TODO: creates a puzzle in db based on puzzle object info
-      function createPuzzle() {
+      function createPuzzleInDB() {
         // create puzzle
         // get word_id_array
         // get clue_id_array
         $puzzleName = $this->puzzleName;
         $word_id_array = getWordIdArray($this->word_array);
-        $clue_id_array = getClueIdArray($this->word_array);
+        $clue_id_array = getClueIdArray($this->clues_array);
         savePuzzle($puzzleName, $word_id_array, $clue_id_array);
       }
 
